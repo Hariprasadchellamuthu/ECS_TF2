@@ -146,6 +146,7 @@ resource "aws_launch_configuration" "python_launch_configuration" {
   name                 = "python-launch-config"
   image_id             = "ami-0aee0743bf2e81172"  # Replace with your AMI ID
   instance_type        = "t2.small"  # Adjust instance type as needed
+  security_groups = [aws_security_group.ecs_security_group.id]
   associate_public_ip_address = true
 
   # Other configurations for the launch configuration as needed
@@ -195,10 +196,10 @@ resource "aws_ecs_service" "python_ecs_service" {
   task_definition = aws_ecs_task_definition.python_task_definition.arn
   launch_type     = "EC2"
 
-  network_configuration {
-    subnets = [aws_subnet.subnet_a.id]
-    security_groups = [aws_security_group.ecs_security_group.id]
-  }
+  #network_configuration {
+    #subnets = [aws_subnet.subnet_a.id]
+    #security_groups = [aws_security_group.ecs_security_group.id]
+  #}
 
   deployment_controller {
     type = "ECS"
@@ -220,6 +221,7 @@ resource "aws_launch_configuration" "jenkins_launch_configuration" {
   name                 = "jenkins-launch-config"
   image_id             = "ami-0aee0743bf2e81172"  # Replace with your AMI ID
   instance_type        = "t2.micro"  # Adjust instance type as needed
+  security_groups = [aws_security_group.ecs_security_group.id]
   associate_public_ip_address = true
 
   # Other configurations for the launch configuration as needed
@@ -270,10 +272,10 @@ resource "aws_ecs_service" "jenkins_ecs_service" {
   task_definition = aws_ecs_task_definition.jenkins_task_definition.arn
   launch_type     = "EC2"
 
-  network_configuration {
-    subnets = [aws_subnet.subnet_b.id]
-    security_groups = [aws_security_group.ecs_security_group.id]
-  }
+  #network_configuration {
+    #subnets = [aws_subnet.subnet_b.id]
+    #security_groups = [aws_security_group.ecs_security_group.id]
+  #}
 
   deployment_controller {
     type = "ECS"
