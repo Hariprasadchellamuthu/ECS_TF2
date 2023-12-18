@@ -138,7 +138,8 @@ resource "aws_ecs_cluster" "python_cluster" {
 resource "aws_launch_configuration" "python_launch_configuration" {
   name                 = "python-launch-config"
   image_id             = "ami-0aee0743bf2e81172"  # Replace with your AMI ID
-  instance_type        = "t2.micro"  # Adjust instance type as needed
+  instance_type        = "t2.small"  # Adjust instance type as needed
+  associate_public_ip_address = true
 
   # Other configurations for the launch configuration as needed
 }
@@ -212,6 +213,7 @@ resource "aws_launch_configuration" "jenkins_launch_configuration" {
   name                 = "jenkins-launch-config"
   image_id             = "ami-0aee0743bf2e81172"  # Replace with your AMI ID
   instance_type        = "t2.micro"  # Adjust instance type as needed
+  associate_public_ip_address = true
 
   # Other configurations for the launch configuration as needed
 }
