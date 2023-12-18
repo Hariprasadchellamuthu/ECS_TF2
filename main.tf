@@ -49,6 +49,87 @@ resource "aws_security_group" "ecs_security_group" {
   }
 }
 
+resource "aws_iam_role" "ecs_execution_role" {
+  assume_role_policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = [
+      {
+        Action    = "sts:AssumeRole",
+        Effect    = "Allow",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "ecs_execution_role_policy" {
+  name   = "ecs_execution_role_policy"
+  role   = aws_iam_role.ecs_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "ec2:CreateTags",
+          "ec2:RunInstances",
+          "ec2:StopInstances",
+          "ec2:StartInstances",
+          "ec2:TerminateInstances",
+          # Add other EC2 related actions as necessary
+        ],
+        Resource = "*",
+      },
+    ],
+  })
+}
+
+resource "aws_iam_role" "ecs_task_role" {
+  assume_role_policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = [
+      {
+        Action    = "sts:AssumeRole",
+        Effect    = "Allow",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "ecs_task_role_policy" {
+  name   = "ecs_task_role_policy"
+  role   = aws_iam_role.ecs_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = [
+          "iam:PassRole",
+          "iam:CreateRole",
+          "iam:AttachRolePolicy",
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy",
+          "iam:DeleteRole",
+          # Add other IAM related actions as necessary
+          "ec2:DescribeSecurityGroups",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupIngress",
+          # Add other security group related actions as necessary
+        ],
+        Resource = "*",
+      },
+    ],
+  })
+}
+
 # ECS Cluster 1 with Python Application
 resource "aws_ecs_cluster" "python_cluster" {
   name = "python-ecs-cluster"
