@@ -1,8 +1,8 @@
 provider "aws" {
-  region = "ap-south-1"  # Replace with your AWS region
+  region = "ap-south-1"  
 }
 
-# Create VPC and Subnets (similar to your existing code)
+# Create VPC and Subnets 
 resource "aws_vpc" "my_vpc" {
   cidr_block = "10.0.0.0/16"
   enable_dns_support   = true
@@ -25,14 +25,13 @@ resource "aws_subnet" "subnet_b" {
   availability_zone = "ap-south-1b"
 }
 
-# Security Group (similar to your existing code)
+# Security Group 
 resource "aws_security_group" "ecs_security_group" {
   name        = "ecs-security-group"
   description = "Security group for ECS tasks"
   vpc_id      = aws_vpc.my_vpc.id
 
-  # Define your security group rules here
-  # Example inbound rules (modify as needed)
+  
   ingress {
     from_port   = 8080
     to_port     = 8080
@@ -47,7 +46,7 @@ resource "aws_security_group" "ecs_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Example outbound rules (modify as needed)
+  
   egress {
     from_port   = 0
     to_port     = 0
@@ -144,12 +143,12 @@ resource "aws_ecs_cluster" "python_cluster" {
 
 resource "aws_launch_configuration" "python_launch_configuration" {
   name                 = "python-launch-config"
-  image_id             = "ami-0aee0743bf2e81172"  # Replace with your AMI ID
-  instance_type        = "t2.small"  # Adjust instance type as needed
+  image_id             = "ami-0aee0743bf2e81172" 
+  instance_type        = "t2.small" 
   security_groups = [aws_security_group.ecs_security_group.id]
   associate_public_ip_address = true
 
-  # Other configurations for the launch configuration as needed
+  
 }
 
 resource "aws_autoscaling_group" "python_autoscaling_group" {
@@ -160,7 +159,7 @@ resource "aws_autoscaling_group" "python_autoscaling_group" {
   launch_configuration = aws_launch_configuration.python_launch_configuration.id
   vpc_zone_identifier  = [aws_subnet.subnet_a.id]
 
-  # Additional configurations as needed
+  
 }
 
 resource "aws_ecs_task_definition" "python_task_definition" {
@@ -219,12 +218,12 @@ resource "aws_ecs_cluster" "jenkins_cluster" {
 
 resource "aws_launch_configuration" "jenkins_launch_configuration" {
   name                 = "jenkins-launch-config"
-  image_id             = "ami-0aee0743bf2e81172"  # Replace with your AMI ID
-  instance_type        = "t2.micro"  # Adjust instance type as needed
+  image_id             = "ami-0aee0743bf2e81172" 
+  instance_type        = "t2.micro"  
   security_groups = [aws_security_group.ecs_security_group.id]
   associate_public_ip_address = true
 
-  # Other configurations for the launch configuration as needed
+
 }
 
 resource "aws_autoscaling_group" "jenkins_autoscaling_group" {
@@ -235,7 +234,7 @@ resource "aws_autoscaling_group" "jenkins_autoscaling_group" {
   launch_configuration = aws_launch_configuration.jenkins_launch_configuration.id
   vpc_zone_identifier  = [aws_subnet.subnet_b.id]
 
-  # Additional configurations as needed
+  
 }
 
 resource "aws_ecs_task_definition" "jenkins_task_definition" {
