@@ -165,7 +165,6 @@ resource "aws_iam_role_policy" "ecs_task_role_policy" {
 # ECS Cluster 1 with Python Application
 resource "aws_ecs_cluster" "python_cluster" {
   name = "python-ecs-cluster"
-  capacity_providers = ["FARGATE", "EC2"]
 }
 
 resource "aws_launch_configuration" "python_launch_configuration" {
@@ -241,7 +240,6 @@ resource "aws_ecs_service" "python_ecs_service" {
 # ECS Cluster 2 with Jenkins Application
 resource "aws_ecs_cluster" "jenkins_cluster" {
   name = "jenkins-ecs-cluster"
-  capacity_providers = ["FARGATE", "EC2"]
 }
 
 resource "aws_launch_configuration" "jenkins_launch_configuration" {
