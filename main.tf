@@ -224,7 +224,7 @@ resource "aws_autoscaling_group" "python_autoscaling_group" {
   health_check_grace_period = 300
   health_check_type         = "EC2"
 
-  launch_configuration = aws_launch_configuration.python_launch_configuration.id
+  launch_configuration = aws_launch_configuration.python_launch_configuration.name
   vpc_zone_identifier  = [aws_subnet.subnet_a.id]
 
   
@@ -301,7 +301,7 @@ resource "aws_autoscaling_group" "jenkins_autoscaling_group" {
   health_check_grace_period = 300
   health_check_type         = "EC2"
 
-  launch_configuration = aws_launch_configuration.jenkins_launch_configuration.id
+  launch_configuration = aws_launch_configuration.jenkins_launch_configuration.name
   vpc_zone_identifier  = [aws_subnet.subnet_b.id]
 
   
