@@ -111,7 +111,6 @@ resource "aws_iam_role_policy" "ecs_execution_role_policy" {
           "ec2:StopInstances",
           "ec2:StartInstances",
           "ec2:TerminateInstances",
-          # Add other EC2 related actions as necessary
         ],
         Resource = "*",
       },
