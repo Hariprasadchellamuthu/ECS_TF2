@@ -149,11 +149,9 @@ resource "aws_iam_role_policy" "ecs_task_role_policy" {
           "iam:PutRolePolicy",
           "iam:DeleteRolePolicy",
           "iam:DeleteRole",
-          # Add other IAM related actions as necessary
           "ec2:DescribeSecurityGroups",
           "ec2:AuthorizeSecurityGroupIngress",
           "ec2:RevokeSecurityGroupIngress",
-          # Add other security group related actions as necessary
         ],
         Resource = "*",
       },
