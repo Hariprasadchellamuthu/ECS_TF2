@@ -172,15 +172,7 @@ resource "aws_launch_configuration" "python_launch_configuration" {
   image_id             = "ami-0aee0743bf2e81172" 
   instance_type        = "t2.small" 
   security_groups = [aws_security_group.ecs_security_group.id]
-  associate_public_ip_address = true
-    user_data = <<-EOF
-              #!/bin/bash
-              echo ECS_CLUSTER=${aws_ecs_cluster.python_cluster.name} >> /etc/ecs/ecs.config
-              yum update -y
-              yum install -y amazon-ecs-agent
-              systemctl enable --now ecs
-              EOF
-  
+  associate_public_ip_address = true  
 }
 
 resource "aws_autoscaling_group" "python_autoscaling_group" {
@@ -254,15 +246,6 @@ resource "aws_launch_configuration" "jenkins_launch_configuration" {
   instance_type        = "t2.micro"  
   security_groups = [aws_security_group.ecs_security_group.id]
   associate_public_ip_address = true
-    user_data = <<-EOF
-              #!/bin/bash
-              echo ECS_CLUSTER=${aws_ecs_cluster.jenkins_cluster.name} >> /etc/ecs/ecs.config
-              yum update -y
-              yum install -y amazon-ecs-agent
-              systemctl enable --now ecs
-              EOF
-
-
 }
 
 resource "aws_autoscaling_group" "jenkins_autoscaling_group" {
