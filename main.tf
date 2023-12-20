@@ -72,7 +72,20 @@ resource "aws_security_group" "ecs_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "65535"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -162,6 +175,33 @@ resource "aws_iam_role_policy" "ecs_task_role_policy" {
   })
 }
 
+data "aws_iam_policy_document" "ecs_agent" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "ecs_agent" {
+  name               = "ecs-agent"
+  assume_role_policy = data.aws_iam_policy_document.ecs_agent.json
+}
+
+
+resource "aws_iam_role_policy_attachment" "ecs_agent" {
+  role       = "aws_iam_role.ecs_agent.name"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+resource "aws_iam_instance_profile" "ecs_agent" {
+  name = "ecs-agent"
+  role = aws_iam_role.ecs_agent.name
+}
+
 # ECS Cluster 1 with Python Application
 resource "aws_ecs_cluster" "python_cluster" {
   name = "python-ecs-cluster"
@@ -170,15 +210,19 @@ resource "aws_ecs_cluster" "python_cluster" {
 resource "aws_launch_configuration" "python_launch_configuration" {
   name                 = "python-launch-config"
   image_id             = "ami-0aee0743bf2e81172" 
+  iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
   instance_type        = "t2.small" 
-  security_groups = [aws_security_group.ecs_security_group.id]
+  security_groups      = [aws_security_group.ecs_security_group.id]
+  user_data            = "#!/bin/bash\necho ECS_CLUSTER=python_cluster >> /etc/ecs/ecs.config"
   associate_public_ip_address = true  
 }
 
 resource "aws_autoscaling_group" "python_autoscaling_group" {
-  desired_capacity     = 1
-  max_size             = 3
-  min_size             = 1
+  desired_capacity          = 1
+  max_size                  = 3
+  min_size                  = 1
+  health_check_grace_period = 300
+  health_check_type         = "EC2"
 
   launch_configuration = aws_launch_configuration.python_launch_configuration.id
   vpc_zone_identifier  = [aws_subnet.subnet_a.id]
@@ -242,9 +286,11 @@ resource "aws_ecs_cluster" "jenkins_cluster" {
 
 resource "aws_launch_configuration" "jenkins_launch_configuration" {
   name                 = "jenkins-launch-config"
-  image_id             = "ami-0aee0743bf2e81172" 
+  image_id             = "ami-0aee0743bf2e81172"
+  iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
   instance_type        = "t2.micro"  
-  security_groups = [aws_security_group.ecs_security_group.id]
+  security_groups      = [aws_security_group.ecs_security_group.id]
+  user_data            = "#!/bin/bash\necho ECS_CLUSTER=my-cluster >> /etc/ecs/ecs.config"
   associate_public_ip_address = true
 }
 
@@ -252,6 +298,8 @@ resource "aws_autoscaling_group" "jenkins_autoscaling_group" {
   desired_capacity     = 1
   max_size             = 3
   min_size             = 1
+  health_check_grace_period = 300
+  health_check_type         = "EC2"
 
   launch_configuration = aws_launch_configuration.jenkins_launch_configuration.id
   vpc_zone_identifier  = [aws_subnet.subnet_b.id]
