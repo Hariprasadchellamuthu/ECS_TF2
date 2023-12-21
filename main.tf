@@ -286,7 +286,7 @@ resource "aws_launch_configuration" "jenkins_launch_configuration" {
   security_groups      = [aws_security_group.ecs_security_group.id]
   user_data            = "#!/bin/bash\necho ECS_CLUSTER=my-cluster >> /etc/ecs/ecs.config
                           yum install -y ecs-init
-                          start ecs""
+                          start ecs"
   associate_public_ip_address = true
 }
 
