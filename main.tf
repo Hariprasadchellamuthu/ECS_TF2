@@ -205,7 +205,9 @@ resource "aws_launch_configuration" "python_launch_configuration" {
   iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
   instance_type        = "t2.small" 
   security_groups      = [aws_security_group.ecs_security_group.id]
-  user_data            = "#!/bin/bash\necho ECS_CLUSTER=python_cluster >> /etc/ecs/ecs.config"
+  user_data            = "#!/bin/bash\necho ECS_CLUSTER=python_cluster >> /etc/ecs/ecs.config
+                          yum install -y ecs-init
+                          start ecs"
   associate_public_ip_address = true  
 }
 
@@ -282,7 +284,9 @@ resource "aws_launch_configuration" "jenkins_launch_configuration" {
   iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
   instance_type        = "t2.micro"  
   security_groups      = [aws_security_group.ecs_security_group.id]
-  user_data            = "#!/bin/bash\necho ECS_CLUSTER=my-cluster >> /etc/ecs/ecs.config"
+  user_data            = "#!/bin/bash\necho ECS_CLUSTER=my-cluster >> /etc/ecs/ecs.config
+                          yum install -y ecs-init
+                          start ecs""
   associate_public_ip_address = true
 }
 
